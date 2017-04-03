@@ -2,7 +2,8 @@ const NODE_ENV = process.env.NODE_ENV || 'development',
     isDevelopment = 'development' == NODE_ENV,
     isProduction = !isDevelopment;
 
-const ExtractTextPlugin = require('extract-text-webpack-plugin'),
+const BabiliPlugin = require('babili-webpack-plugin'),
+    ExtractTextPlugin = require('extract-text-webpack-plugin'),
     path = require('path'),
     webpack = require('webpack');
 
@@ -63,14 +64,6 @@ if (isProduction) {
         }),
 
         // Minify assets.
-        new webpack.optimize.UglifyJsPlugin({
-            compress: {
-                warnings: false
-            },
-            output: {
-                comments: false,
-            },
-            sourceMap: true
-        })
+        new BabiliPlugin()
     );
 }

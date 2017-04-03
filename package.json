@@ -8,6 +8,7 @@
         "prod": "NODE_ENV=production node ./node_modules/webpack/bin/webpack.js"
     },
     "devDependencies": {
+        "babili-webpack-plugin": "^0.0",
         "css-loader": "^0.28",
         "extract-text-webpack-plugin": "^2.1",
         "file-loader": "^0.11",
