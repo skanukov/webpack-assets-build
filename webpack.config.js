@@ -52,7 +52,10 @@ module.exports = {
         new ExtractTextPlugin(`${getAssetName()}.css`)
     ],
 
-    watch: isDevelopment
+    watch: isDevelopment,
+    watchOptions: {
+        poll: true
+    }
 };
 
 // Minify assets for production.
