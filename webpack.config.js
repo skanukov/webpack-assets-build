@@ -1,5 +1,5 @@
 const NODE_ENV = process.env.NODE_ENV || 'development',
-    isDevelopment = 'development' == NODE_ENV,
+    isDevelopment = 'development' === NODE_ENV,
     isProduction = !isDevelopment;
 
 const BabiliPlugin = require('babili-webpack-plugin'),
@@ -58,12 +58,12 @@ module.exports = {
 // Minify assets for production.
 if (isProduction) {
     module.exports.plugins.push(
-        // Enable CSS minification.
+        // Minify CSS.
         new webpack.LoaderOptionsPlugin({
             minimize: true
         }),
 
-        // Minify assets.
+        // Minify JS.
         new BabiliPlugin()
     );
 }
