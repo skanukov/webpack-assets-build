@@ -2,15 +2,18 @@ const NODE_ENV = process.env.NODE_ENV || 'development',
   isDevelopment = 'development' === NODE_ENV,
   isProduction = !isDevelopment;
 
-const ExtractTextPlugin = require('extract-text-webpack-plugin'),
+const CopyWebpackPlugin = require('copy-webpack-plugin'),
+  ExtractTextPlugin = require('extract-text-webpack-plugin'),
   HtmlWebpackPlugin = require('html-webpack-plugin'),
   MinifyPlugin = require('babel-minify-webpack-plugin'),
   path = require('path'),
   webpack = require('webpack');
 
 // Add hash to asset name for production.
-const getAssetName = () => {
-  return 'static/[name]' + (isProduction ? '-[hash]' : '');
+const getAssetName = (assetType, useHash = true) => {
+  return (
+    `static/${assetType}/[name]` + (useHash && isProduction ? '-[hash]' : '')
+  );
 };
 
 const getCssLoader = () => {
@@ -32,7 +35,7 @@ module.exports = {
   output: {
     path: path.join(__dirname, './build'),
     publicPath: '/',
-    filename: `${getAssetName()}.js`
+    filename: `${getAssetName('js')}.js`
   },
 
   // Define source maps.
@@ -53,15 +56,22 @@ module.exports = {
 
       // Copy images, fonts, etc.
       {
-        test: /\.woff2?$|\.ttf$|\.eot$|\.svg$|\.png$|\.jpe?g$|\.gif$/,
-        use: `file-loader?name=${getAssetName()}.[ext]`
+        test: /\.svg$|\.png$|\.jpe?g$|\.gif$/,
+        use: `file-loader?name=${getAssetName('img', false)}.[ext]`
+      },
+      {
+        test: /\.woff2?$|\.ttf$|\.eot$/,
+        use: `file-loader?name=${getAssetName('fnt', false)}.[ext]`
       }
     ]
   },
 
   plugins: [
+    // Copy files from 'public' dir.
+    new CopyWebpackPlugin([{ from: '../public' }]),
+
     // Extract CSS to separate file.
-    new ExtractTextPlugin(`${getAssetName()}.css`),
+    new ExtractTextPlugin(`${getAssetName('css')}.css`),
 
     // Build the index page.
     new HtmlWebpackPlugin({
@@ -72,6 +82,9 @@ module.exports = {
         : {
             collapseBooleanAttributes: true,
             collapseWhitespace: true,
+            minifyCSS: true,
+            minifyJS: true,
+            minifyURLs: true,
             processConditionalComments: true,
             removeComments: true,
             removeEmptyAttributes: true,
